@@ -12,10 +12,9 @@ ingress:
 services:
   - name: web
     environment_slug: node-js
-    github:
-      repo: shahaman098/Oacto
+    git:
+      repo_clone_url: https://github.com/shahaman098/Oacto.git
       branch: main
-      deploy_on_push: true
     source_dir: /
     build_command: pnpm install --frozen-lockfile && pnpm build
     run_command: pnpm start
