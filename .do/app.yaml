@@ -13,7 +13,7 @@ services:
   - name: web
     environment_slug: node-js
     github:
-      repo: shahaman098/Quote-Delta-Ledger
+      repo: shahaman098/Oacto
       branch: main
       deploy_on_push: true
     source_dir: /
