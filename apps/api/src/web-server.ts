@@ -99,7 +99,10 @@ async function serveStaticAsset(req: IncomingMessage, res: ServerResponse) {
   }
 
   const requestedPath = decodeURIComponent((req.url ?? "/").split("?")[0] ?? "/");
-  const candidate = resolve(staticRoot, normalize(requestedPath).replace(/^(\.\.[/\\])+/, ""));
+  const safePath = normalize(requestedPath)
+    .replace(/^[/\\]+/, "")
+    .replace(/^(\.\.[/\\])+/, "");
+  const candidate = resolve(staticRoot, safePath);
   const filePath = candidate.startsWith(staticRoot) ? candidate : indexFile;
   const resolvedFile = await existingFile(filePath);
   const finalFile = resolvedFile ?? indexFile;
