@@ -37,8 +37,8 @@ trap 'rm -f "$tmp_spec"' EXIT
 node scripts/render-do-spec.mjs .do/app.yaml "$tmp_spec"
 
 pnpm build
-doctl apps spec validate "$tmp_spec"
-doctl apps propose --spec "$tmp_spec"
+doctl apps spec validate .do/app.yaml --schema-only >/dev/null
+doctl apps propose --spec .do/app.yaml
 
 if [[ "$APPLY" != "true" ]]; then
   echo "Dry run complete. Re-run scripts/deploy.sh --apply to create or update the DigitalOcean app."
