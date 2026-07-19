@@ -1,0 +1,18 @@
+[project]
+name = "quote-delta-ledger"
+goal = "Build a hackathon-ready negotiation ledger that turns vendor calls into evidence-backed quote comparisons."
+
+[verification]
+command = "./scripts/check.sh"
+
+[context]
+required = [
+  "PRODUCT.md",
+  "PLANS.md",
+  "docs/context.md",
+  "docs/product/requirements.md",
+  "docs/product/outcome-map.md",
+  "docs/product/acceptance-criteria.md",
+  "docs/architecture/overview.md",
+  "docs/plans/active/001-mvp.md"
+]

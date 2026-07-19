@@ -1,0 +1,26 @@
+{
+  "name": "quote-delta-ledger",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@10.17.0",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @quote-delta/web dev",
+    "dev:api": "pnpm --filter @quote-delta/api dev",
+    "dev:web": "pnpm --filter @quote-delta/web dev",
+    "build": "pnpm --filter @quote-delta/web build",
+    "start": "pnpm --filter @quote-delta/api start:web",
+    "lint": "pnpm --filter @quote-delta/web lint",
+    "typecheck": "pnpm --filter @quote-delta/web typecheck && pnpm --filter @quote-delta/api typecheck && pnpm --filter @quote-delta/validation typecheck && pnpm --filter @quote-delta/types typecheck",
+    "test": "pnpm --filter @quote-delta/web test && pnpm --filter @quote-delta/api test && pnpm --filter @quote-delta/validation test",
+    "test:e2e": "playwright test",
+    "smoke:api": "bash ./scripts/smoke-api.sh",
+    "check": "./scripts/check.sh"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.55.1"
+  }
+}

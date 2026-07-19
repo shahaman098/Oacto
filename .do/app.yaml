@@ -1,0 +1,48 @@
+name: quote-delta-ledger
+region: nyc
+features:
+  - buildpack-stack=ubuntu-22
+ingress:
+  rules:
+    - component:
+        name: web
+      match:
+        path:
+          prefix: /
+services:
+  - name: web
+    environment_slug: node-js
+    github:
+      repo: shahaman098/Quote-Delta-Ledger
+      branch: main
+      deploy_on_push: true
+    source_dir: /
+    build_command: pnpm install --frozen-lockfile && pnpm build
+    run_command: pnpm start
+    http_port: 8080
+    instance_count: 1
+    instance_size_slug: apps-s-1vcpu-1gb-fixed
+    health_check:
+      http_path: /api/health
+      initial_delay_seconds: 30
+      period_seconds: 10
+      timeout_seconds: 5
+      success_threshold: 1
+      failure_threshold: 3
+    envs:
+      - key: NODE_ENV
+        value: production
+        scope: RUN_TIME
+        type: GENERAL
+      - key: ALLOW_LIVE_PROVIDERS
+        value: "true"
+        scope: RUN_TIME
+        type: GENERAL
+      - key: FORCE_FIXTURE_PROVIDERS
+        value: "false"
+        scope: RUN_TIME
+        type: GENERAL
+      - key: OPENAI_MODEL
+        value: gpt-4o-mini
+        scope: RUN_TIME
+        type: GENERAL
