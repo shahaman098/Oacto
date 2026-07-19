@@ -1137,7 +1137,7 @@ dd {
   display: flex;
   gap: 10px;
   align-items: flex-start;
-  padding: 10px 12px;
+  padding: 12px 14px;
   border: 1px solid rgba(59, 130, 246, 0.24);
   border-radius: 10px;
   background: rgba(59, 130, 246, 0.07);
@@ -1152,7 +1152,51 @@ dd {
 .call-demo-cue strong {
   display: block;
   color: var(--ink);
-  font-size: 0.82rem;
+  font-size: 0.88rem;
+}
+
+.call-demo-cue-lead {
+  margin: 4px 0 10px;
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.call-demo-script {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 10px;
+}
+
+.call-demo-script li {
+  display: grid;
+  gap: 4px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.call-demo-script li:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.call-demo-script span {
+  color: var(--faint);
+  font-size: 0.72rem;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.call-demo-script q {
+  display: block;
+  quotes: none;
+  color: var(--ink);
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.4;
 }
 
 .call-demo-cue p {

@@ -14,7 +14,7 @@ export interface OpenAIExtractionAdapter {
 const liveAssertionSchema = z.object({
   id: z.string().min(1).optional(),
   label: z.string().min(1),
-  amount: z.number().nonnegative(),
+  amount: z.number().nonnegative().nullable().optional(),
   status: feeStatusSchema,
   confidence: z.number().min(0).max(1).optional(),
   quote: z.string().min(1),
@@ -35,7 +35,7 @@ function toExtractedAssertion(
   const candidate = {
     id: assertion.id ?? `${transcriptId}-live-${index + 1}`,
     label: assertion.label,
-    amount: assertion.amount,
+    amount: assertion.amount ?? 0,
     status: assertion.status,
     confidence: assertion.confidence ?? 0.75,
     evidence: {
@@ -52,20 +52,16 @@ function toExtractedAssertion(
   return extractedQuoteAssertionSchema.parse(candidate);
 }
 
-function parseLiveContent(content: string, input: TranscriptInput): ExtractionResponse | null {
-  try {
-    const parsed = liveExtractionSchema.parse(JSON.parse(content));
-    return {
-      mode: "live",
-      vendorName: input.vendorName,
-      assertions: parsed.assertions.map((assertion, index) =>
-        toExtractedAssertion(input.transcriptId, assertion, index),
-      ),
-      warnings: parsed.warnings ?? [],
-    };
-  } catch {
-    return null;
-  }
+function parseLiveContent(content: string, input: TranscriptInput): ExtractionResponse {
+  const parsed = liveExtractionSchema.parse(JSON.parse(content));
+  return {
+    mode: "live",
+    vendorName: input.vendorName,
+    assertions: parsed.assertions.map((assertion, index) =>
+      toExtractedAssertion(input.transcriptId, assertion, index),
+    ),
+    warnings: parsed.warnings ?? [],
+  };
 }
 
 /**
@@ -119,14 +115,7 @@ export function createOpenAIExtractionAdapter(
         });
 
         if (!response.ok) {
-          const fallback = fixtureExtractTranscript(input);
-          return {
-            ...fallback,
-            warnings: [
-              ...fallback.warnings,
-              `OpenAI request failed with ${response.status}; fixture extraction used.`,
-            ],
-          };
+          throw new Error(`OpenAI extraction request failed with HTTP ${response.status}`);
         }
 
         const payload = (await response.json()) as {
@@ -134,35 +123,14 @@ export function createOpenAIExtractionAdapter(
         };
         const content = payload.choices?.[0]?.message?.content;
         if (!content) {
-          const fallback = fixtureExtractTranscript(input);
-          return {
-            ...fallback,
-            warnings: [...fallback.warnings, "OpenAI returned empty content; fixture extraction used."],
-          };
+          throw new Error("OpenAI extraction returned empty content");
         }
 
-        const live = parseLiveContent(content, input);
-        if (!live) {
-          const fallback = fixtureExtractTranscript(input);
-          return {
-            ...fallback,
-            warnings: [
-              ...fallback.warnings,
-              "OpenAI JSON failed schema validation; fixture extraction used.",
-            ],
-          };
-        }
-
-        return live;
+        return parseLiveContent(content, input);
       } catch (error) {
-        const fallback = fixtureExtractTranscript(input);
-        return {
-          ...fallback,
-          warnings: [
-            ...fallback.warnings,
-            `OpenAI adapter error: ${error instanceof Error ? error.message : "unknown"}; fixture used.`,
-          ],
-        };
+        throw new Error(
+          `OpenAI extraction failed: ${error instanceof Error ? error.message : "unknown error"}`,
+        );
       }
     },
   };

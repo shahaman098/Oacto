@@ -282,14 +282,34 @@ function LiveCallConsole({
         </div>
       </div>
 
-      <div className="call-demo-cue">
+      <div className="call-demo-cue" data-testid="vendor-demo-prompt">
         <Mic2 size={18} aria-hidden="true" />
         <div>
-          <strong>Judge role-play cue</strong>
-          <p>
-            Answer as Carolina Quick Move. For the closing proof, say: “I can do $1,800 all-in,
-            include stairs, and cap long carry at $75.”
+          <strong>Your role: Carolina Quick Move dispatcher</strong>
+          <p className="call-demo-cue-lead">
+            The ElevenLabs agent is the buyer negotiator. You are the human vendor. Read these lines
+            when it is your turn to speak.
           </p>
+          <ol className="call-demo-script">
+            <li>
+              <span>When the AI asks if you are comfortable continuing</span>
+              <q>Yes, go ahead. This is Carolina Quick Move.</q>
+            </li>
+            <li>
+              <span>When the AI asks for an all-in price</span>
+              <q>For that Rock Hill to Charlotte move, we are looking at about nineteen hundred,
+                and stairs may be extra.</q>
+            </li>
+            <li>
+              <span>When the AI mentions Queen City at eighteen fifty</span>
+              <q>Okay. I can do eighteen hundred all-in, include stairs, and cap long carry at
+                seventy-five dollars.</q>
+            </li>
+            <li>
+              <span>When the AI confirms the offer</span>
+              <q>Yes. Eighteen hundred all-in, stairs included, long carry capped at seventy-five.</q>
+            </li>
+          </ol>
         </div>
       </div>
 

@@ -50,7 +50,40 @@ describe("live provider adapters", () => {
     expect(fetchImpl).toHaveBeenCalled();
   });
 
-  it("falls back to fixture when OpenAI JSON is invalid", async () => {
+  it("maps null OpenAI amounts to zero for vague fee assertions", async () => {
+    const fetchImpl = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        choices: [
+          {
+            message: {
+              content: JSON.stringify({
+                assertions: [
+                  {
+                    label: "Stairs fee",
+                    amount: null,
+                    status: "vague",
+                    quote: "Stairs can be extra.",
+                    startLine: 2,
+                    endLine: 2,
+                  },
+                ],
+              }),
+            },
+          },
+        ],
+      }),
+    });
+
+    const adapter = createOpenAIExtractionAdapter({ OPENAI_API_KEY: "test-key" }, fetchImpl);
+    const result = await adapter.extract(sampleInput);
+
+    expect(result.mode).toBe("live");
+    expect(result.assertions[0]?.amount).toBe(0);
+    expect(result.assertions[0]?.leverageEligible).toBe(false);
+  });
+
+  it("reports invalid live OpenAI JSON instead of falling back to fixture", async () => {
     const fetchImpl = vi.fn().mockResolvedValue({
       ok: true,
       json: async () => ({
@@ -59,10 +92,8 @@ describe("live provider adapters", () => {
     });
 
     const adapter = createOpenAIExtractionAdapter({ OPENAI_API_KEY: "test-key" }, fetchImpl);
-    const result = await adapter.extract(sampleInput);
 
-    expect(result.mode).toBe("fixture");
-    expect(result.warnings.some((warning) => /schema validation/i.test(warning))).toBe(true);
+    await expect(adapter.extract(sampleInput)).rejects.toThrow(/OpenAI extraction failed/i);
   });
 
   it("maps Tavily search results into web findings", async () => {
